@@ -9,6 +9,6 @@ public class CustomerException extends RuntimeException {
     }
 
     public CustomerException(String errorMessage) {
-        this.errorMessage = errorMessage;
+        super(errorMessage);
     }
 }

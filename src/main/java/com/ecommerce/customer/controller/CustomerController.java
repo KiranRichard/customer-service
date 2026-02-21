@@ -1,6 +1,7 @@
 package com.ecommerce.customer.controller;
 
 import com.ecommerce.customer.model.Customer;
+import com.ecommerce.customer.request.CustomerRequest;
 import com.ecommerce.customer.service.CustomerService;
 import com.ecommerce.customer.validator.RequestValidator;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,10 @@ public class CustomerController {
     private final RequestValidator requestValidator;
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
+    public Customer createCustomer(@RequestBody CustomerRequest customerRequest) {
         log.info("Inside CustomerController createCustomer Method");
-        requestValidator.validateCustomerRequest(customer);
-        return customerService.createCustomer(customer);
+        requestValidator.validateCustomerRequest(customerRequest);
+        return customerService.createCustomer(customerRequest);
     }
 
     @GetMapping("/{customerId}")
@@ -40,12 +41,11 @@ public class CustomerController {
     }
 
     @PutMapping("/{customerId}")
-    public Customer editCustomer(@RequestBody Customer customer, @PathVariable("customerId") long customerId) {
+    public Customer editCustomer(@RequestBody CustomerRequest customerRequest, @PathVariable("customerId") long customerId) {
         log.info("Inside CustomerController editCustomer Method with customerId: {}", customerId);
         requestValidator.validateCustomerId(customerId);
-        customer.setCustomerId(customerId);
-        requestValidator.validateCustomerRequest(customer);
-        return customerService.editCustomer(customer);
+        requestValidator.validateCustomerRequest(customerRequest);
+        return customerService.editCustomer(customerRequest, customerId);
     }
 
     @DeleteMapping("/{customerId}")

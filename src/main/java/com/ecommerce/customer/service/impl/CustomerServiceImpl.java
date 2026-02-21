@@ -3,6 +3,7 @@ package com.ecommerce.customer.service.impl;
 import com.ecommerce.customer.exception.CustomerException;
 import com.ecommerce.customer.model.Customer;
 import com.ecommerce.customer.repository.CustomerRepository;
+import com.ecommerce.customer.request.CustomerRequest;
 import com.ecommerce.customer.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,35 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public Customer createCustomer(Customer customer) {
+    public Customer createCustomer(CustomerRequest customerRequest) {
+        Customer customer = new Customer();
+        customer.setCustomerFirstName(customerRequest.getCustomerFirstName());
+        customer.setCustomerLastName(customerRequest.getCustomerLastName());
+        customer.setCustomerEmailId(customerRequest.getCustomerEmailId());
+        customer.setActive(customerRequest.getActive());
         return customerRepository.save(customer);
     }
 
     @Override
     public Optional<Customer> getCustomer(long customerId) {
-        return customerRepository.findById(customerId);
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        if (optionalCustomer.isEmpty()) {
+            throw new CustomerException("Customer id is not present and unable to update");
+        }
+        return optionalCustomer;
     }
 
     @Override
-    public Customer editCustomer(Customer customer) {
+    public Customer editCustomer(CustomerRequest customerRequest, long customerId) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
+        if (optionalCustomer.isEmpty()) {
+            throw new CustomerException("Customer id is not present and unable to update");
+        }
+        Customer customer = optionalCustomer.get();
+        customer.setCustomerFirstName(customerRequest.getCustomerFirstName());
+        customer.setCustomerLastName(customerRequest.getCustomerLastName());
+        customer.setCustomerEmailId(customer.getCustomerEmailId());
+        customer.setActive(customerRequest.getActive());
         return customerRepository.save(customer);
     }
 
